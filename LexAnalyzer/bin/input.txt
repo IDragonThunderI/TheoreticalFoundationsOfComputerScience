@@ -1,0 +1,5 @@
+\ Start program \
+
+(RAA1 = RAA2 and RAA3 = 0x1 or not(RAA2 > RAA3))? RAA4 := 0x0 * RAA1 : RAA5 := 0x1 / RAA2;
+
+\ End program \
