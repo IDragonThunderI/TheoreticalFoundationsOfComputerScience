@@ -3,6 +3,7 @@
 #include <cmath>
 #include <fstream>
 #include <vector>
+#include "codeGen.hpp"
 using namespace std;
 
 struct Node {
@@ -692,7 +693,7 @@ void vivod(ofstream& fout, Node& _node, int space) {
     }
 }
 
-void derevo_oper() {
+void genTriads() {
     ifstream file("derevo_v.txt");
 
     string b;
@@ -719,12 +720,4 @@ void derevo_oper() {
     file.close();
     fout.close();
     file_out.close();
-}
-
-void triads() {
-    derevo_oper();
-}
-
-int main() {
-    triads();
 }

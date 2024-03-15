@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include "syntaxAnalyzer.hpp"
 using namespace std;
 
 int buf_i, num_tokens = 0;
@@ -324,7 +325,7 @@ void s_analyz(ofstream& file_out_SR) {
     }
 }
 
-void Syntax_Analyz() {
+void syntaxAnalysis() {
     setlocale(LC_ALL, "");
     ofstream file_out_SR;
     file_out_SR.open("out_SR.txt");
@@ -351,9 +352,4 @@ void Syntax_Analyz() {
 
     file_out_SR.close();
     file_derevo.close();
-}
-
-int main() {
-    Syntax_Analyz();
-    return 0;
 }

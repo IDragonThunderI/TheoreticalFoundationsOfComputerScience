@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include "lexAnalyzer.hpp"
 using namespace std;
 
 /*
@@ -114,8 +115,8 @@ void lexem(string s, int y, int n) {
     }
 }
 
-int main() {
-    ifstream code_in("input.txt");
+void lexAnalysis(std::string file) {
+    ifstream code_in(file);
 
     string now_line, res = "";
     int num = 0;
@@ -1500,6 +1501,4 @@ int main() {
     code_in.close();
     fout.close();
     id_out.close();
-
-    return 0;
 }
