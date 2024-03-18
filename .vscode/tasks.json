@@ -3,11 +3,12 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "C/C++: g++.exe сборка активного файла",
+            "label": "C/C++: g++.exe сборка многофайлового проекта \"Compiler\"",
             "command": "C:\\msys64\\ucrt64\\bin\\g++.exe",
             "args": [
-                "${file}",
+                "${fileDirname}\\*.cpp",
                 "-o", "${fileDirname}\\bin\\${fileBasenameNoExtension}.exe",
+                "-I", "${fileDirname}\\include",
                 "-g",
                 "-fdiagnostics-color=always",
                 "-Wall",

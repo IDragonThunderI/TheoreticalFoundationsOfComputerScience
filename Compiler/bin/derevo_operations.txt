@@ -1,0 +1,29 @@
+do
+:=
+MSA1
++
+ MSA1
+ MSA2
+:=
+MSA2
+-
+ MSA2
+ 0x1
+:=
+MSA3
++
+ MSA3
+ 0x1
+while
+or
+ and
+  <
+   MSA1
+   MSA2
+  >
+   MSA2
+   MSA3
+ not
+  =
+   MSA3
+   0x1
