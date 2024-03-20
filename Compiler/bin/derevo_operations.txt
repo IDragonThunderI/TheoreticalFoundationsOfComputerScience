@@ -1,0 +1,29 @@
+while
+or
+ and
+  <
+   RIA1
+   RIA2
+  >
+   RIA2
+   RIA3
+ not
+  =
+   RIA3
+   0x1
+do
+:=
+RIA1
++
+ RIA1
+ RIA2
+:=
+RIA2
+-
+ RIA2
+ 0x1
+:=
+RIA3
++
+ RIA3
+ 0x1

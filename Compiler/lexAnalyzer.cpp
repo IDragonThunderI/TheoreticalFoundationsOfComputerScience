@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include "lexAnalyzer.hpp"
 using namespace std;
 
 /*
@@ -48,9 +49,14 @@ enum states {
     not2 = 24,
     not3 = 25,
 
-    if1 = 26,
+    while1 = 26,
+    while2 = 27,
+    while3 = 28,
+    while4 = 29,
+    while5 = 30,
 
-    else1 = 27
+    do1 = 31,
+    do2 = 32
 };
 
 ofstream fout("out_LA.txt", ios_base::trunc);
@@ -86,7 +92,7 @@ void lexem(string s, int y, int n) {
         case 7:
             fout << " комментарий " << n << endl;
             break;
-        case 10: case 20: case 22: case 25: case 26: case 27:
+        case 10: case 20: case 22: case 25: case 30: case 32:
             fout << " ключевое_слово " << n << endl;
             break;
         case 11:
@@ -114,8 +120,8 @@ void lexem(string s, int y, int n) {
     }
 }
 
-int main() {
-    ifstream code_in("input.txt");
+void lexAnalysis(std::string file) {
+    ifstream code_in(file);
 
     string now_line, res = "";
     int num = 0;
@@ -146,13 +152,9 @@ int main() {
                     res += n_sym;
                     state = comment;
                     break;
-                case '?':
-                    res += n_sym;
-                    state = if1;
-                    break;
                 case ':':
                     res += n_sym;
-                    state = else1;
+                    state = _equal;
                     break;
                 case '>': case '<': case '=':
                     res += n_sym;
@@ -182,9 +184,19 @@ int main() {
                     res += n_sym;
                     state = states::not1;
                     break;
-                case 'b': case 'c': case 'd': case 'e':
+                case 'w':
+                    res += n_sym;
+                    state = while1;
+                    break;
+                case 'd':
+                    res += n_sym;
+                    state = do1;
+                    break;
+                case 'b': case 'c':
+                case 'e':
                 case 'g': case 'h': case 'i': case 'j': case 'k': case 'l': case 'm':
-                case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
+                case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v':
+                case 'x': case 'y': case 'z':
                 case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
                 case '_':
                     res += n_sym;
@@ -245,7 +257,7 @@ int main() {
                 case ':':
                     lexem(res, 3, num);
                     res = n_sym;
-                    state = else1;
+                    state = _equal;
                     break;
                 case ' ': case '\t': case '\r':
                     lexem(res, 3, num);
@@ -324,7 +336,7 @@ int main() {
                 case ':':
                     lexem(res, 4, num);
                     res = n_sym;
-                    state = else1;
+                    state = _equal;
                     break;
                 case '\\':
                     lexem(res, 4, num);
@@ -391,6 +403,20 @@ int main() {
                     break;
                 }
                 break;
+            case (_equal):
+                switch (n_sym) {
+                case '=':
+                    res += n_sym;
+                    lexem(res, 6, num);
+                    res = "";
+                    state = start;
+                    break;
+                default:
+                    res += n_sym;
+                    state = error;
+                    break;
+                }
+                break;
             case (comment):
                 switch (n_sym) {
                 case '\\':
@@ -422,7 +448,7 @@ int main() {
                 case ':':
                     lexem(res, 4, num);
                     res = n_sym;
-                    state = else1;
+                    state = _equal;
                     break;
                 case '\\':
                     lexem(res, 4, num);
@@ -506,7 +532,7 @@ int main() {
                 case ':':
                     lexem(res, 4, num);
                     res = n_sym;
-                    state = else1;
+                    state = _equal;
                     break;
                 case '\\':
                     lexem(res, 4, num);
@@ -585,7 +611,7 @@ int main() {
                 case ':':
                     lexem(res, 10, num);
                     res = n_sym;
-                    state = else1;
+                    state = _equal;
                     break;
                 case '\\':
                     lexem(res, 10, num);
@@ -669,7 +695,7 @@ int main() {
                 case ':':
                     lexem(res, 4, num);
                     res = n_sym;
-                    state = else1;
+                    state = _equal;
                     break;
                 case '\\':
                     lexem(res, 4, num);
@@ -752,7 +778,7 @@ int main() {
                 case ':':
                     lexem(res, 4, num);
                     res = n_sym;
-                    state = else1;
+                    state = _equal;
                     break;
                 case '\\':
                     lexem(res, 4, num);
@@ -830,7 +856,7 @@ int main() {
                 case ':':
                     lexem(res, 20, num);
                     res = n_sym;
-                    state = else1;
+                    state = _equal;
                     break;
                 case '\\':
                     lexem(res, 20, num);
@@ -914,7 +940,7 @@ int main() {
                 case ':':
                     lexem(res, 4, num);
                     res = n_sym;
-                    state = else1;
+                    state = _equal;
                     break;
                 case '\\':
                     lexem(res, 4, num);
@@ -993,7 +1019,7 @@ int main() {
                 case ':':
                     lexem(res, 22, num);
                     res = n_sym;
-                    state = else1;
+                    state = _equal;
                     break;
                 case '\\':
                     lexem(res, 22, num);
@@ -1077,7 +1103,7 @@ int main() {
                 case ':':
                     lexem(res, 4, num);
                     res = n_sym;
-                    state = else1;
+                    state = _equal;
                     break;
                 case '\\':
                     lexem(res, 4, num);
@@ -1161,7 +1187,7 @@ int main() {
                 case ':':
                     lexem(res, 4, num);
                     res = n_sym;
-                    state = else1;
+                    state = _equal;
                     break;
                 case '\\':
                     lexem(res, 4, num);
@@ -1240,7 +1266,7 @@ int main() {
                 case ':':
                     lexem(res, 25, num);
                     res = n_sym;
-                    state = else1;
+                    state = _equal;
                     break;
                 case '\\':
                     lexem(res, 25, num);
@@ -1307,70 +1333,79 @@ int main() {
                     break;
                 }
                 break;
-            case (if1):
+            case (while1):
                 switch (n_sym) {
+                case 'h':
+                    res += n_sym;
+                    state = while2;
+                    break;
                 case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-                case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
+                case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g':
+                case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
                 case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
                 case '_':
-                    lexem(res, 26, num);
-                    res = n_sym;
+                    res += n_sym;
                     state = id;
                     break;
+                case ':':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    state = _equal;
+                    break;
                 case '\\':
-                    lexem(res, 26, num);
+                    lexem(res, 4, num);
                     res = n_sym;
                     state = comment;
                     break;
                 case ' ': case '\t': case '\r':
-                    lexem(res, 26, num);
+                    lexem(res, 4, num);
                     res = "";
                     state = start;
                     break;
                 case ';':
-                    lexem(res, 26, num);
+                    lexem(res, 4, num);
                     res = n_sym;
                     lexem(res, 11, num);
                     res = "";
                     state = start;
                     break;
                 case '+': case '-': case '*': case '/':
-                    lexem(res, 26, num);
+                    lexem(res, 4, num);
                     res = n_sym;
                     lexem(res, 5, num);
                     res = "";
                     state = start;
                     break;
                 case '>': case '<': case '=':
-                    lexem(res, 26, num);
+                    lexem(res, 4, num);
                     res = n_sym;
                     lexem(res, 12, num);
                     res = "";
                     state = start;
                     break;
                 case '{':
-                    lexem(res, 26, num);
+                    lexem(res, 4, num);
                     res = n_sym;
                     lexem(res, 13, num);
                     res = "";
                     state = start;
                     break;
                 case '}':
-                    lexem(res, 26, num);
+                    lexem(res, 4, num);
                     res = n_sym;
                     lexem(res, 14, num);
                     res = "";
                     state = start;
                     break;
                 case '(':
-                    lexem(res, 26, num);
+                    lexem(res, 4, num);
                     res = n_sym;
                     lexem(res, 15, num);
                     res = "";
                     state = start;
                     break;
                 case ')':
-                    lexem(res, 26, num);
+                    lexem(res, 4, num);
                     res = n_sym;
                     lexem(res, 16, num);
                     res = "";
@@ -1382,76 +1417,489 @@ int main() {
                     break;
                 }
                 break;
-            case (else1):
+            case (while2):
                 switch (n_sym) {
-                case '=':
+                case 'i':
                     res += n_sym;
-                    lexem(res, 6, num);
-                    res = "";
-                    state = start;
+                    state = while3;
                     break;
                 case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-                case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
+                case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h':
+                case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
                 case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
                 case '_':
-                    lexem(res, 27, num);
-                    res = n_sym;
+                    res += n_sym;
                     state = id;
                     break;
+                case ':':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    state = _equal;
+                    break;
                 case '\\':
-                    lexem(res, 27, num);
+                    lexem(res, 4, num);
                     res = n_sym;
                     state = comment;
                     break;
                 case ' ': case '\t': case '\r':
-                    lexem(res, 27, num);
+                    lexem(res, 4, num);
                     res = "";
                     state = start;
                     break;
                 case ';':
-                    lexem(res, 27, num);
+                    lexem(res, 4, num);
                     res = n_sym;
                     lexem(res, 11, num);
                     res = "";
                     state = start;
                     break;
                 case '+': case '-': case '*': case '/':
-                    lexem(res, 27, num);
+                    lexem(res, 4, num);
                     res = n_sym;
                     lexem(res, 5, num);
                     res = "";
                     state = start;
                     break;
-                case '>': case '<':
-                    lexem(res, 27, num);
+                case '>': case '<': case '=':
+                    lexem(res, 4, num);
                     res = n_sym;
                     lexem(res, 12, num);
                     res = "";
                     state = start;
                     break;
                 case '{':
-                    lexem(res, 27, num);
+                    lexem(res, 4, num);
                     res = n_sym;
                     lexem(res, 13, num);
                     res = "";
                     state = start;
                     break;
                 case '}':
-                    lexem(res, 27, num);
+                    lexem(res, 4, num);
                     res = n_sym;
                     lexem(res, 14, num);
                     res = "";
                     state = start;
                     break;
                 case '(':
-                    lexem(res, 27, num);
+                    lexem(res, 4, num);
                     res = n_sym;
                     lexem(res, 15, num);
                     res = "";
                     state = start;
                     break;
                 case ')':
-                    lexem(res, 27, num);
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 16, num);
+                    res = "";
+                    state = start;
+                    break;
+                default:
+                    res += n_sym;
+                    state = error;
+                    break;
+                }
+                break;
+            case (while3):
+                switch (n_sym) {
+                case 'l':
+                    res += n_sym;
+                    state = while4;
+                    break;
+                case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+                case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j': case 'k':
+                case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
+                case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
+                case '_':
+                    res += n_sym;
+                    state = id;
+                    break;
+                case ':':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    state = _equal;
+                    break;
+                case '\\':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    state = comment;
+                    break;
+                case ' ': case '\t': case '\r':
+                    lexem(res, 4, num);
+                    res = "";
+                    state = start;
+                    break;
+                case ';':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 11, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '+': case '-': case '*': case '/':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 5, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '>': case '<': case '=':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 12, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '{':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 13, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '}':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 14, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '(':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 15, num);
+                    res = "";
+                    state = start;
+                    break;
+                case ')':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 16, num);
+                    res = "";
+                    state = start;
+                    break;
+                default:
+                    res += n_sym;
+                    state = error;
+                    break;
+                }
+                break;
+            case (while4):
+                switch (n_sym) {
+                case 'e':
+                    res += n_sym;
+                    state = while5;
+                    break;
+                case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+                case 'a': case 'b': case 'c': case 'd':
+                case 'f': case 'g': case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
+                case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
+                case '_':
+                    res += n_sym;
+                    state = id;
+                    break;
+                case ':':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    state = _equal;
+                    break;
+                case '\\':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    state = comment;
+                    break;
+                case ' ': case '\t': case '\r':
+                    lexem(res, 4, num);
+                    res = "";
+                    state = start;
+                    break;
+                case ';':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 11, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '+': case '-': case '*': case '/':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 5, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '>': case '<': case '=':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 12, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '{':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 13, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '}':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 14, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '(':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 15, num);
+                    res = "";
+                    state = start;
+                    break;
+                case ')':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 16, num);
+                    res = "";
+                    state = start;
+                    break;
+                default:
+                    res += n_sym;
+                    state = error;
+                    break;
+                }
+                break;
+            case (while5):
+                switch (n_sym) {
+                case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+                case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
+                case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
+                case '_':
+                    res += n_sym;
+                    state = id;
+                    break;
+                case ':':
+                    lexem(res, 30, num);
+                    res = n_sym;
+                    state = _equal;
+                    break;
+                case '\\':
+                    lexem(res, 30, num);
+                    res = n_sym;
+                    state = comment;
+                    break;
+                case ' ': case '\t': case '\r':
+                    lexem(res, 30, num);
+                    res = "";
+                    state = start;
+                    break;
+                case ';':
+                    lexem(res, 30, num);
+                    res = n_sym;
+                    lexem(res, 11, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '+': case '-': case '*': case '/':
+                    lexem(res, 30, num);
+                    res = n_sym;
+                    lexem(res, 5, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '>': case '<': case '=':
+                    lexem(res, 30, num);
+                    res = n_sym;
+                    lexem(res, 12, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '{':
+                    lexem(res, 30, num);
+                    res = n_sym;
+                    lexem(res, 13, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '}':
+                    lexem(res, 30, num);
+                    res = n_sym;
+                    lexem(res, 14, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '(':
+                    lexem(res, 30, num);
+                    res = n_sym;
+                    lexem(res, 15, num);
+                    res = "";
+                    state = start;
+                    break;
+                case ')':
+                    lexem(res, 30, num);
+                    res = n_sym;
+                    lexem(res, 16, num);
+                    res = "";
+                    state = start;
+                    break;
+                default:
+                    res += n_sym;
+                    state = error;
+                    break;
+                }
+                break;
+            case (do1):
+                switch (n_sym) {
+                case 'o':
+                    res += n_sym;
+                    state = do2;
+                    break;
+                case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+                case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n':
+                case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
+                case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
+                case '_':
+                    res += n_sym;
+                    state = id;
+                    break;
+                case ':':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    state = _equal;
+                    break;
+                case '\\':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    state = comment;
+                    break;
+                case ' ': case '\t': case '\r':
+                    lexem(res, 4, num);
+                    res = "";
+                    state = start;
+                    break;
+                case ';':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 11, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '+': case '-': case '*': case '/':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 5, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '>': case '<': case '=':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 12, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '{':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 13, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '}':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 14, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '(':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 15, num);
+                    res = "";
+                    state = start;
+                    break;
+                case ')':
+                    lexem(res, 4, num);
+                    res = n_sym;
+                    lexem(res, 16, num);
+                    res = "";
+                    state = start;
+                    break;
+                default:
+                    res += n_sym;
+                    state = error;
+                    break;
+                }
+                break;
+            case (do2):
+                switch (n_sym) {
+                case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+                case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
+                case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
+                case '_':
+                    res += n_sym;
+                    state = id;
+                    break;
+                case ':':
+                    lexem(res, 32, num);
+                    res = n_sym;
+                    state = _equal;
+                    break;
+                case '\\':
+                    lexem(res, 32, num);
+                    res = n_sym;
+                    state = comment;
+                    break;
+                case ' ': case '\t': case '\r':
+                    lexem(res, 32, num);
+                    res = "";
+                    state = start;
+                    break;
+                case ';':
+                    lexem(res, 32, num);
+                    res = n_sym;
+                    lexem(res, 11, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '+': case '-': case '*': case '/':
+                    lexem(res, 32, num);
+                    res = n_sym;
+                    lexem(res, 5, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '>': case '<': case '=':
+                    lexem(res, 32, num);
+                    res = n_sym;
+                    lexem(res, 12, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '{':
+                    lexem(res, 32, num);
+                    res = n_sym;
+                    lexem(res, 13, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '}':
+                    lexem(res, 32, num);
+                    res = n_sym;
+                    lexem(res, 14, num);
+                    res = "";
+                    state = start;
+                    break;
+                case '(':
+                    lexem(res, 32, num);
+                    res = n_sym;
+                    lexem(res, 15, num);
+                    res = "";
+                    state = start;
+                    break;
+                case ')':
+                    lexem(res, 32, num);
                     res = n_sym;
                     lexem(res, 16, num);
                     res = "";
@@ -1495,11 +1943,9 @@ int main() {
 
     if (state != comment) {
         state = start;
-    }
+}
 
     code_in.close();
     fout.close();
     id_out.close();
-
-    return 0;
 }
